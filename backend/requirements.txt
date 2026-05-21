@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+google-generativeai
+pymongo
+reportlab
+python-dotenv
+httpx
+python-multipart
