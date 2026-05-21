@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 from scorer import score_startup
+from matcher import match_investors
 
 app = FastAPI(
     title="StartupLens API",
@@ -31,8 +32,16 @@ def health():
 
 
 @app.post("/test-score")
-def test_score(data: dict = Body(...)):
+def test_score(data:dict):
 
-    result = score_startup(data)
+    scores=score_startup(data)
 
-    return result
+    investors=match_investors(
+        data,
+        scores
+    )
+
+    return {
+        "scores":scores,
+        "investors":investors
+    }

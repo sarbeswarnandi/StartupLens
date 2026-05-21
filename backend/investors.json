@@ -1,0 +1,101 @@
+[
+  {
+    "id":1,
+    "archetype":"Early-stage India SaaS Fund",
+    "preferred_stage":["pre-revenue","mvp","seed"],
+    "sectors":["SaaS","B2B"],
+    "geography":["India"],
+    "ticket_size":"$50K-$500K",
+    "risk_appetite":"high"
+  },
+
+  {
+    "id":2,
+    "archetype":"Deep Tech Investor",
+    "preferred_stage":["seed","series-a"],
+    "sectors":["DeepTech","AI","Robotics"],
+    "geography":["Global","India"],
+    "ticket_size":"$250K-$2M",
+    "risk_appetite":"high"
+  },
+
+  {
+    "id":3,
+    "archetype":"Fintech Venture Fund",
+    "preferred_stage":["seed","series-a"],
+    "sectors":["FinTech"],
+    "geography":["India","SEA"],
+    "ticket_size":"$100K-$1M",
+    "risk_appetite":"medium"
+  },
+
+  {
+    "id":4,
+    "archetype":"Consumer Startup Investor",
+    "preferred_stage":["pre-revenue","seed"],
+    "sectors":["Consumer","D2C","B2C"],
+    "geography":["India"],
+    "ticket_size":"$50K-$250K",
+    "risk_appetite":"high"
+  },
+
+  {
+    "id":5,
+    "archetype":"B2B Enterprise Investor",
+    "preferred_stage":["seed","series-a"],
+    "sectors":["B2B"],
+    "geography":["Global"],
+    "ticket_size":"$500K-$3M",
+    "risk_appetite":"medium"
+  },
+
+  {
+    "id":6,
+    "archetype":"EdTech Fund",
+    "preferred_stage":["pre-revenue","seed"],
+    "sectors":["EdTech"],
+    "geography":["India"],
+    "ticket_size":"$50K-$400K",
+    "risk_appetite":"high"
+  },
+
+  {
+    "id":7,
+    "archetype":"HealthTech Growth Investor",
+    "preferred_stage":["seed","series-a"],
+    "sectors":["HealthTech"],
+    "geography":["India","Global"],
+    "ticket_size":"$500K-$2M",
+    "risk_appetite":"medium"
+  },
+
+  {
+    "id":8,
+    "archetype":"Impact Fund",
+    "preferred_stage":["pre-revenue","seed"],
+    "sectors":["AgriTech","Climate","Impact"],
+    "geography":["India","Africa"],
+    "ticket_size":"$100K-$800K",
+    "risk_appetite":"high"
+  },
+
+  {
+    "id":9,
+    "archetype":"Angel Syndicate",
+    "preferred_stage":["idea","pre-revenue"],
+    "sectors":["Any"],
+    "geography":["India"],
+    "ticket_size":"$10K-$100K",
+    "risk_appetite":"high"
+  },
+
+  {
+    "id":10,
+    "archetype":"Growth Stage VC",
+    "preferred_stage":["series-a","series-b"],
+    "sectors":["Any"],
+    "geography":["Global"],
+    "ticket_size":"$2M-$20M",
+    "risk_appetite":"low"
+  }
+]
