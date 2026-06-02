@@ -94,15 +94,10 @@ def generate_memo(
     )
 
     overview = [
-
         f"Name: {startup_data.get('name')}",
-
         f"Sector: {startup_data.get('sector')}",
-
         f"Stage: {startup_data.get('revenue_stage')}",
-
         f"Geography: {startup_data.get('geography')}"
-
     ]
 
     for item in overview:
@@ -177,13 +172,11 @@ def generate_memo(
     y -= 30
 
     score_items = [
-
-        ("Market", scores["market_score"]),
-        ("Team", scores["team_score"]),
-        ("Traction", scores["traction_score"]),
-        ("Product", scores["product_score"]),
-        ("Fundability", scores["fundability_score"])
-
+        ("Market", scores.get("market_score", 0)),
+        ("Team", scores.get("team_score", 0)),
+        ("Traction", scores.get("traction_score", 0)),
+        ("Product", scores.get("product_score", 0)),
+        ("Fundability", scores.get("fundability_score", 0))
     ]
 
     for label, value in score_items:
@@ -272,25 +265,13 @@ def generate_memo(
 
         for flag in flags:
 
-            severity = flag.get(
-                "severity"
-            )
-
-            message = flag.get(
-                "message"
-            )
+            severity = flag.get("severity")
+            message = flag.get("message")
 
             if severity == "critical":
-
-                pdf.setFillColor(
-                    colors.red
-                )
-
+                pdf.setFillColor(colors.red)
             else:
-
-                pdf.setFillColor(
-                    colors.orange
-                )
+                pdf.setFillColor(colors.orange)
 
             pdf.drawString(
                 60,
@@ -331,8 +312,10 @@ def generate_memo(
     for investor in investors:
 
         investor_text = (
-            f"{investor['archetype']} "
-            f"(Score: {investor['match_score']})"
+            f"{investor.get("archetype", "Unknown")} | "
+            f"Match Score: {investor.get("match_score", 0)} | "
+            f"Risk: {investor.get("risk_appetite", "n/A")} | "
+            f"Ticket: {investor.get("ticket_size", "N/A")}"
         )
 
         pdf.drawString(
@@ -344,7 +327,7 @@ def generate_memo(
         y -= 18
 
     # =========================
-    # AI VERDICT
+    # EXECUTIVE SUMMARY
     # =========================
 
     y -= 15
@@ -361,13 +344,25 @@ def generate_memo(
     pdf.drawString(
         50,
         y,
-        "AI Verdict"
+        "Executive Summary"
     )
 
     y -= 25
 
-    verdict_prompt = f"""
-You are a startup investment analyst.
+    fundability = scores.get(
+        "fundability_score",
+        5
+    )
+
+    if fundability >= 8:
+        recommendation = "Strong Interest"
+    elif fundability >= 6:
+        recommendation = "Moderate Interest"
+    else:
+        recommendation = "High Risk"
+
+    summary_prompt = f"""
+You are a venture capital analyst.
 
 Startup:
 {startup_data}
@@ -378,25 +373,59 @@ Scores:
 Flags:
 {flags}
 
-Write a concise professional investment verdict in 3 short lines.
-Do not use markdown.
+Write:
+
+Executive Summary:
+(2-3 professional sentences)
+
+Key Strengths:
+- bullet 1
+- bullet 2
+
+Investment Recommendation:
+{recommendation}
+
+Reason:
+One concise sentence.
+
+No markdown.
+Keep under 120 words.
 """
 
-    verdict = ask_gemini(
-        verdict_prompt
+    try:
+
+        summary = ask_gemini(summary_prompt)
+
+        summary = (
+            summary
+            .replace("**", "")
+            .replace("*", "")
+            .strip()
+        )
+
+    except Exception:
+
+        summary = "Unable to generate AI summary."
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        12
     )
 
-    verdict = (
-        verdict
-        .replace("**", "")
-        .replace("*", "")
-        .strip()
+    if recommendation == "Strong Interest":
+        pdf.setFillColor(colors.darkgreen)
+    elif recommendation == "Moderate Interest":
+        pdf.setFillColor(colors.orange)
+    else:
+        pdf.setFillColor(colors.red)
+
+    pdf.drawString(
+        60,
+        y,
+        f"Recommendation: {recommendation}"
     )
 
-    verdict_lines = wrap(
-        verdict,
-        width=85
-    )
+    y -= 25
 
     pdf.setFont(
         "Helvetica",
@@ -407,7 +436,23 @@ Do not use markdown.
         colors.black
     )
 
-    for line in verdict_lines[:6]:
+    summary_lines = wrap(
+        summary,
+        width=85
+    )
+
+    for line in summary_lines:
+
+        if y < 80:
+
+            pdf.showPage()
+
+            y = height - 60
+
+            pdf.setFont(
+                "Helvetica",
+                11
+            )
 
         pdf.drawString(
             60,
