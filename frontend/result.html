@@ -1,39 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Results</title>
-    <link rel="stylesheet"
-          href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StartupLens Results</title>
+
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>
-        Startup Analysis
-    </h1>
+        <h1>📊 Startup Analysis Report</h1>
 
-    <h2>
-        Fundability Score:
-        <span id="fundability"></span>
-    </h2>
+        <p class="subtitle">
+            AI-generated startup evaluation and investor insights
+        </p>
 
-    <h3>Detailed Scores</h3>
+        <!-- Fundability Score -->
+        <div class="score-box">
 
-    <div id="scores"></div>
+            <h2>Fundability Score</h2>
 
-    <h3>Risk Flags</h3>
+            <div
+                id="fundability"
+                class="score-value">
 
-    <ul id="flags"></ul>
+                --
+            </div>
 
-    <h3>Top Investors</h3>
+        </div>
 
-    <ul id="investors"></ul>
+        <!-- Detailed Scores -->
+        <div class="result-card">
 
-</div>
+            <h3>
+                📈 Detailed Scores
+            </h3>
 
-<script src="js/result.js"></script>
+            <div id="scores">
+
+                Loading scores...
+
+            </div>
+
+        </div>
+
+        <!-- Risk Flags -->
+        <div class="result-card">
+
+            <h3>
+                ⚠️ Risk Flags
+            </h3>
+
+            <ul id="flags">
+
+                <li>
+                    Loading flags...
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- Investors -->
+        <div class="result-card">
+
+            <h3>
+                💰 Recommended Investors
+            </h3>
+
+            <ul id="investors">
+
+                <li>
+                    Loading investors...
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+
+            <button
+                id="downloadMemo"
+                class="download-btn">
+
+                📄 Download Investment Memo
+            </button>
+
+            <button
+                onclick="window.location.href='index.html'"
+                class="back-btn">
+
+                🔄 Analyze Another Startup
+            </button>
+
+        </div>
+
+    </div>
+
+    <script src="js/result.js"></script>
 
 </body>
+
 </html>
