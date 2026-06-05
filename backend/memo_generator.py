@@ -436,12 +436,15 @@ Keep under 120 words.
         colors.black
     )
 
-    summary_lines = wrap(
-        summary,
-        width=85
-    )
+    summary_lines = summary.split("\n")
 
     for line in summary_lines:
+
+        line = line.strip()
+
+        if not line:
+            y -= 10
+            continue
 
         if y < 80:
 
@@ -454,10 +457,39 @@ Keep under 120 words.
                 11
             )
 
+        if (
+            "Executive Summary:" in line
+            or
+            "Key Strengths:" in line
+            or
+            "Investment Recommendation:" in line
+            or
+            "Reason:" in line
+        ):
+
+            pdf.setFont(
+                "Helvetica-Bold",
+                12
+            )
+
+        else:
+
+            pdf.setFont(
+                "Helvetica",
+                11
+            )
+
+    wrapped_lines = wrap(
+        line,
+        width=85
+    )
+
+    for wrapped in wrapped_lines:
+
         pdf.drawString(
             60,
             y,
-            line
+            wrapped
         )
 
         y -= 18
