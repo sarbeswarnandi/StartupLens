@@ -312,10 +312,10 @@ def generate_memo(
     for investor in investors:
 
         investor_text = (
-            f"{investor.get("archetype", "Unknown")} | "
-            f"Match Score: {investor.get("match_score", 0)} | "
-            f"Risk: {investor.get("risk_appetite", "n/A")} | "
-            f"Ticket: {investor.get("ticket_size", "N/A")}"
+            f"{investor.get('archetype', 'Unknown')} | "
+            f"Match Score: {investor.get('match_score', 0)}% | "
+            f"Risk: {investor.get('risk_appetite', 'n/A')} | "
+            f"Ticket: {investor.get('ticket_size', 'N/A')}"
         )
 
         pdf.drawString(

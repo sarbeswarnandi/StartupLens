@@ -24,33 +24,28 @@ def match_investors(
 
         return []
 
-
-
     matches = []
 
     startup_sector = (
         startup_data.get(
             "sector",
             ""
-        )
+        ).strip()
     )
-
 
     startup_stage = (
         startup_data.get(
             "revenue_stage",
             ""
-        )
+        ).strip()
     )
-
 
     startup_geo = (
         startup_data.get(
             "geography",
             ""
-        )
+        ).strip()
     )
-
 
     fundability = (
         scores.get(
@@ -59,103 +54,117 @@ def match_investors(
         )
     )
 
-
-
     for investor in investors:
 
         score = 0
 
+        # =========================
+        # SECTOR MATCH (40%)
+        # =========================
 
-        # sector match
+        sectors = investor.get(
+            "sectors",
+            []
+        )
+
         if (
-            startup_sector in investor["sectors"]
+            startup_sector in sectors
             or
-            "Any" in investor["sectors"]
+            "Any" in sectors
         ):
 
-            score += 2
+            score += 40
 
+        # =========================
+        # STAGE MATCH (30%)
+        # =========================
 
-        # stage match
+        preferred_stages = investor.get(
+            "preferred_stage",
+            []
+        )
+
         if (
             startup_stage
-            in investor[
-                "preferred_stage"
-            ]
+            in preferred_stages
         ):
 
-            score += 2
+            score += 30
 
+        # =========================
+        # GEOGRAPHY MATCH (10%)
+        # =========================
 
-        # geography match
+        geographies = investor.get(
+            "geography",
+            []
+        )
+
         if (
-            startup_geo
-            in investor[
-                "geography"
-            ]
-
+            startup_geo in geographies
             or
-
-            "Global"
-            in investor[
-                "geography"
-            ]
+            "Global" in geographies
         ):
 
-            score += 1
+            score += 10
 
+        # =========================
+        # RISK APPETITE MATCH (20%)
+        # =========================
 
-        # risk appetite match
+        risk = investor.get(
+            "risk_appetite",
+            "medium"
+        ).lower()
 
-        risk = investor[
-            "risk_appetite"
-        ]
+        if fundability >= 8:
 
+            if risk == "low":
+                score += 20
 
-        if (
-            fundability < 5
-            and
-            risk == "high"
-        ):
+        elif fundability >= 6:
 
-            score += 1
+            if risk in [
+                "medium",
+                "high"
+            ]:
+                score += 20
 
+        else:
 
-        elif (
-            fundability >= 5
-            and
-            risk != "low"
-        ):
+            if risk == "high":
+                score += 20
 
-            score += 1
+        # =========================
+        # INVESTOR OBJECT
+        # =========================
 
-
-        # clean response object
         matches.append(
 
             {
                 "archetype":
-                investor[
-                    "archetype"
-                ],
+                investor.get(
+                    "archetype",
+                    "Unknown"
+                ),
 
                 "ticket_size":
-                investor[
-                    "ticket_size"
-                ],
+                investor.get(
+                    "ticket_size",
+                    "N/A"
+                ),
 
                 "risk_appetite":
-                investor[
-                    "risk_appetite"
-                ],
+                investor.get(
+                    "risk_appetite",
+                    "N/A"
+                ),
 
                 "match_score":
                 score
             }
 
         )
-
-
 
     matches.sort(
 
@@ -165,6 +174,5 @@ def match_investors(
         reverse=True
 
     )
-
 
     return matches[:3]
