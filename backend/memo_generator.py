@@ -479,20 +479,166 @@ Keep under 120 words.
                 11
             )
 
-    wrapped_lines = wrap(
-        line,
-        width=85
-    )
-
-    for wrapped in wrapped_lines:
-
-        pdf.drawString(
-            60,
-            y,
-            wrapped
+        wrapped_lines = wrap(
+            line,
+            width=85
         )
 
-        y -= 18
+        for wrapped in wrapped_lines:
+
+            pdf.drawString(
+                60,
+                y,
+                wrapped
+            )
+
+            y -= 18
+
+        # =========================
+        # INVESTMENT THESIS
+        # =========================
+
+        y -= 20
+
+        if y < 150:
+
+            pdf.showPage()
+
+            y = height - 60
+
+        pdf.setFillColor(
+            colors.black
+        )
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        15
+    )
+
+    pdf.drawString(
+        50,
+        y,
+        "Due Diligence Questions"
+    )
+
+    y -= 25
+
+    questions_prompt = f"""
+You are a senior venture capital analyst.
+
+Startup:
+{startup_data}
+
+Scores:
+{scores}
+
+Flags:
+{flags}
+
+Write:
+
+Market Opportunity:
+(1-2 sentences)
+
+Competitive Advantage:
+(1-2 sentences)
+
+Growth Potential:
+(1-2 sentences)
+
+Investment Verdict:
+(1 sentence)
+
+Keep it professional.
+Maximum 150 words.
+No markdown.
+"""
+
+    try:
+
+        questions = ask_gemini(
+            questions_prompt
+        )
+        questions = (
+            questions
+            .replace("**", "")
+            .replace("*", "")
+            .strip()
+        )
+
+    except Exception:
+
+        questions = """
+Market Opportunity:
+Unable to generate analysis.
+
+Competitive Advantage:
+N/A
+
+Growth Potential:
+N/A
+
+Investment Verdict:
+Further review required.
+"""
+
+    pdf.setFont(
+        "Helvetica",
+        11
+    )
+
+    response_lines = questions.split("\n")
+
+    for line in response_lines:
+
+        line = line.strip()
+
+        if not line:
+            y -= 10
+            continue
+
+        if y < 80:
+
+            pdf.showPage()
+
+            y = height - 60
+
+        if (
+            "Market Opportunity:" in line
+            or
+            "Competitive Advantage:" in line
+            or
+            "Growth Potential:" in line
+            or
+            "Investment Verdict:" in line
+        ):
+
+            pdf.setFont(
+                "Helvetica-Bold",
+                12
+            )
+
+        else:
+
+            pdf.setFont(
+                "Helvetica",
+                11
+            )
+
+        wrapped_lines = wrap(
+            line,
+            width=85
+        )
+
+        for wrapped in wrapped_lines:
+
+            pdf.drawString(
+                60,
+                y,
+                wrapped
+            )
+
+            y -= 18
 
     # =========================
     # FOOTER
@@ -506,7 +652,6 @@ Keep under 120 words.
         "Helvetica-Oblique",
         9
     )
-
     pdf.drawString(
         50,
         30,

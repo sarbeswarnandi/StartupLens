@@ -41,6 +41,45 @@ document.getElementById(
 ).innerText =
     result.scores.fundability_score;
 
+    const fundability =
+    result.scores.fundability_score;
+
+const badge =
+    document.getElementById(
+        "recommendationBadge"
+    );
+
+if (fundability >= 8) {
+
+    badge.innerText =
+        "🟢 Strong Interest";
+
+    badge.classList.add(
+        "recommendation-strong"
+    );
+
+}
+else if (fundability >= 6) {
+
+    badge.innerText =
+        "🟡 Moderate Interest";
+
+    badge.classList.add(
+        "recommendation-moderate"
+    );
+
+}
+else {
+
+    badge.innerText =
+        "🔴 High Risk";
+
+    badge.classList.add(
+        "recommendation-risk"
+    );
+
+}
+
 
 /* ==========================
    Detailed Scores
@@ -133,34 +172,31 @@ if (
 } else {
 
     investorContainer.innerHTML =
-        result.investors
-            .map(
-                investor =>
+    result.investors
+        .map(
+            investor =>
 
-                `<li>
+            `
+            <li class="investor-card">
 
-                    <strong>
-                        ${investor.archetype}
-                    </strong>
+                <div class="investor-name">
+                    ${investor.archetype}
+                </div>
 
+                <div class="investor-score">
+                    ${investor.match_score}%
+                </div>
+
+                <div class="investor-details">
+                    Risk: ${investor.risk_appetite}
                     <br>
+                    Ticket: ${investor.ticket_size}
+                </div>
 
-                    Match Score:
-                    ${investor.match_score}
-
-                    <br>
-
-                    Risk Appetite:
-                    ${investor.risk_appetite}
-
-                    <br>
-
-                    Ticket Size:
-                    ${investor.ticket_size}
-
-                </li>`
-            )
-            .join("");
+            </li>
+            `
+        )
+        .join("");
 }
 
 
