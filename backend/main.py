@@ -6,6 +6,7 @@ from scorer import score_startup
 from matcher import match_investors
 from flag_detector import detect_flags
 from memo_generator import generate_memo
+from bson import ObjectId
 
 from report_model import (
     save_report,
@@ -174,27 +175,63 @@ def generate_memo_route(data: dict):
 
 @app.get("/reports")
 def get_reports():
-
     try:
+        reports = []
 
-        reports = list(
-            reports_collection.find(
-                {},
-                {
-                    "_id": 0
-                }
-            )
-        )
+        for report in reports_collection.find():
+            report["_id"] = str(report["_id"])
+            reports.append(report)
 
         return reports
 
     except Exception as e:
-
-        print(
-            "\nREPORT FETCH ERROR:"
-        )
+        print("\nREPORT FETCH ERROR:")
         print(str(e))
+        return {"error": str(e)}
+
+@app.get("/report/{report_id}")
+def get_report(report_id: str):
+
+    report = reports_collection.find_one(
+        {
+            "_id": ObjectId(report_id)
+        }
+    )
+
+    if not report:
 
         return {
-            "error": str(e)
+            "error": "Report not found"
         }
+
+    report["_id"] = str(
+        report["_id"]
+    )
+
+    return report   
+
+@app.get("/reports/{startup_name}")
+def get_report_by_name(
+    startup_name: str
+):
+
+    reports = []
+
+    for report in reports_collection.find(
+        {
+            "startup_data.name": {
+                "$regex": startup_name,
+                "$options": "i"
+            }
+        }
+    ):
+
+        report["_id"] = str(
+            report["_id"]
+        )
+
+        reports.append(
+            report
+        )
+
+    return reports
