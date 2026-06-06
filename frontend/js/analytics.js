@@ -17,59 +17,97 @@ async function loadAnalytics() {
     ).innerHTML =
 
     `
-    <div class="result-card">
+    <div class="score-grid">
 
-        <h2>
-            Total Reports
-        </h2>
+        <div class="score-item">
+            <strong>Total Reports</strong>
+            <p>${data.total_reports}</p>
+        </div>
 
-        <p>
-            ${data.total_reports}
-        </p>
+        <div class="score-item">
+            <strong>Average Fundability</strong>
+            <p>${data.average_fundability}</p>
+        </div>
 
-    </div>
+        <div class="score-item">
+            <strong>Top Sector</strong>
+            <p>${data.top_sector}</p>
+        </div>
 
-    <div class="result-card">
-
-        <h2>
-            Average Fundability
-        </h2>
-
-        <p>
-            ${data.average_fundability}
-        </p>
-
-    </div>
-
-    <div class="result-card">
-
-        <h2>
-            Top Sector
-        </h2>
-
-        <p>
-            ${data.top_sector}
-        </p>
-
-    </div>
-
-    <div class="result-card">
-
-        <h2>
-            Highest Scoring Startup
-        </h2>
-
-        <p>
-            ${data.highest_startup}
-        </p>
-
-        <p>
-            Score:
-            ${data.highest_score}
-        </p>
+        <div class="score-item">
+            <strong>Highest Startup</strong>
+            <p>${data.highest_startup}</p>
+        </div>
 
     </div>
     `;
+
+    renderCharts(
+        data
+    );
+}
+
+
+function renderCharts(
+    data
+){
+
+    new Chart(
+
+        document.getElementById(
+            "fundabilityChart"
+        ),
+
+        {
+            type: "bar",
+
+            data: {
+
+                labels:
+                    data.startup_names,
+
+                datasets: [
+
+                    {
+                        label:
+                            "Fundability Score",
+
+                        data:
+                            data.fundability_scores
+                    }
+                ]
+            }
+        }
+    );
+
+    new Chart(
+
+        document.getElementById(
+            "sectorChart"
+        ),
+
+        {
+            type: "pie",
+
+            data: {
+
+                labels:
+                    Object.keys(
+                        data.sector_distribution
+                    ),
+
+                datasets: [
+
+                    {
+                        data:
+                            Object.values(
+                                data.sector_distribution
+                            )
+                    }
+                ]
+            }
+        }
+    );
 }
 
 loadAnalytics();
