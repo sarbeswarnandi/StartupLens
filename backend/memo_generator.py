@@ -494,21 +494,21 @@ Keep under 120 words.
 
             y -= 18
 
-        # =========================
-        # INVESTMENT THESIS
-        # =========================
+    # =========================
+    # INVESTMENT THESIS
+    # =========================
 
-        y -= 20
+    y -= 20
 
-        if y < 150:
+    if y < 150:
 
-            pdf.showPage()
+        pdf.showPage()
 
-            y = height - 60
+        y = height - 60
 
-        pdf.setFillColor(
-            colors.black
-        )
+    pdf.setFillColor(
+        colors.black
+    )
 
     pdf.setFont(
         "Helvetica-Bold",
@@ -518,12 +518,12 @@ Keep under 120 words.
     pdf.drawString(
         50,
         y,
-        "Due Diligence Questions"
+        "Investment Thesis"
     )
 
     y -= 25
 
-    questions_prompt = f"""
+    thesis_prompt = f"""
 You are a senior venture capital analyst.
 
 Startup:
@@ -556,11 +556,11 @@ No markdown.
 
     try:
 
-        questions = ask_gemini(
-            questions_prompt
+        thesis   = ask_gemini(
+            thesis_prompt
         )
-        questions = (
-            questions
+        thesis = (
+            thesis
             .replace("**", "")
             .replace("*", "")
             .strip()
@@ -568,7 +568,7 @@ No markdown.
 
     except Exception:
 
-        questions = """
+        thesis = """
 Market Opportunity:
 Unable to generate analysis.
 
@@ -587,7 +587,7 @@ Further review required.
         11
     )
 
-    response_lines = questions.split("\n")
+    response_lines = thesis.split("\n")
 
     for line in response_lines:
 
@@ -639,6 +639,74 @@ Further review required.
             )
 
             y -= 18
+
+
+
+    # =========================
+    # DUE DILIGENCE QUESTIONS
+    # =========================
+
+    y -= 20
+
+    if y < 120:
+        pdf.showPage()
+        y = height - 60
+
+    pdf.setFont("Helvetica-Bold", 15)
+    pdf.setFillColor(colors.black)
+    pdf.drawString(50, y, "Due Diligence Questions")
+    y -= 25
+
+    questions_prompt = f"""You are a venture capital analyst.
+
+Startup:
+{startup_data}
+
+Generate 5 due diligence questions.
+
+Requirements:
+- Numbered list
+- One sentence each
+- Investor focused
+"""
+
+    try:
+        questions = ask_gemini(
+            questions_prompt
+        )
+    except Exception:
+        questions = """
+1. What is the customer acquisition cost?
+2. What is the retention rate?
+3. What are the biggest risks?
+4. How scalable is the business?
+5. What differentiates the company?
+"""
+
+    pdf.setFont(
+        "Helvetica",
+        11
+    )
+
+    question_lines = questions.split("\n")
+
+    for line in question_lines:
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if y < 80:
+            pdf.showPage()
+            y = height - 60
+
+        pdf.drawString(
+            60,
+            y,
+            line
+        )
+
+        y -= 18
 
     # =========================
     # FOOTER
