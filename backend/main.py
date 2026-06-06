@@ -1,10 +1,17 @@
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+
 from scorer import score_startup
 from matcher import match_investors
 from flag_detector import detect_flags
 from memo_generator import generate_memo
-from fastapi.responses import FileResponse
+
+from report_model import (
+    save_report,
+    reports_collection
+)
+
 app = FastAPI(
     title="StartupLens API",
     version="1.0"
@@ -21,6 +28,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
+
     return {
         "message": "StartupLens API running"
     }
@@ -28,6 +36,7 @@ def root():
 
 @app.get("/health")
 def health():
+
     return {
         "status": "ok"
     }
@@ -36,66 +45,156 @@ def health():
 @app.post("/test-score")
 def test_score(data: dict):
 
-    scores = score_startup(
-        data
-    )
+    try:
 
-    investors = match_investors(
-        data,
-        scores
-    )
+        scores = score_startup(
+            data
+        )
 
-    flags = detect_flags(
-        data,
-        scores
-    )
+        investors = match_investors(
+            data,
+            scores
+        )
 
-    return {
+        flags = detect_flags(
+            data,
+            scores
+        )
 
-        "scores":
-        scores,
+        try:
 
-        "investors":
-        investors,
+            save_report(
+                data,
+                scores,
+                flags,
+                investors
+            )
 
-        "flags":
-        flags
-    }
+        except Exception as e:
+
+            print(
+                "\nSAVE REPORT ERROR:"
+            )
+            print(str(e))
+
+        return {
+
+            "scores": scores,
+            "investors": investors,
+            "flags": flags
+
+        }
+
+    except Exception as e:
+
+        print(
+            "\nTEST SCORE ERROR:"
+        )
+        print(str(e))
+
+        return {
+            "error": str(e)
+        }
+
+
 @app.post("/generate-memo")
 def generate_memo_route(data: dict):
 
-    scores = score_startup(
-        data
-    )
+    try:
 
-    investors = match_investors(
-        data,
-        scores
-    )
+        scores = score_startup(
+            data
+        )
 
-    flags = detect_flags(
-        data,
-        scores
-    )
+        investors = match_investors(
+            data,
+            scores
+        )
 
-    pdf_bytes = generate_memo(
-        data,
-        scores,
-        flags,
-        investors
-    )
+        flags = detect_flags(
+            data,
+            scores
+        )
 
-    file_path = "startup_memo.pdf"
+        try:
 
-    with open(
-        file_path,
-        "wb"
-    ) as f:
+            save_report(
+                data,
+                scores,
+                flags,
+                investors
+            )
 
-        f.write(pdf_bytes)
+        except Exception as e:
 
-    return FileResponse(
-        path=file_path,
-        media_type="application/pdf",
-        filename="startup_memo.pdf"
-    )
+            print(
+                "\nSAVE REPORT ERROR:"
+            )
+            print(str(e))
+
+        pdf_bytes = generate_memo(
+            data,
+            scores,
+            flags,
+            investors
+        )
+
+        file_path = "startup_memo.pdf"
+
+        with open(
+            file_path,
+            "wb"
+        ) as file:
+
+            file.write(
+                pdf_bytes
+            )
+
+        print(
+            "\nPDF GENERATED SUCCESSFULLY"
+        )
+
+        return FileResponse(
+            path=file_path,
+            media_type="application/pdf",
+            filename="startup_memo.pdf"
+        )
+
+    except Exception as e:
+
+        print(
+            "\nGENERATE MEMO ERROR:"
+        )
+        print(str(e))
+
+        return {
+            "error": str(e)
+        }
+
+
+@app.get("/reports")
+def get_reports():
+
+    try:
+
+        reports = list(
+            reports_collection.find(
+                {},
+                {
+                    "_id": 0
+                }
+            )
+        )
+
+        return reports
+
+    except Exception as e:
+
+        print(
+            "\nREPORT FETCH ERROR:"
+        )
+        print(str(e))
+
+        return {
+            "error": str(e)
+        }
