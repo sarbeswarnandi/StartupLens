@@ -91,6 +91,59 @@ function viewReport(
 }
 
 
+async function deleteReport(
+    reportId
+) {
+
+    const confirmed =
+        confirm(
+            "Delete this report?"
+        );
+
+    if (!confirmed) {
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/report/${reportId}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            result.error
+        ) {
+
+            alert(
+                result.error
+            );
+
+            return;
+        }
+
+        loadReports();
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Failed to delete report."
+        );
+    }
+}
+
+
 function renderReports(
     reports
 ) {
@@ -135,20 +188,34 @@ function renderReports(
 
                     <p>
                         <strong>Created:</strong>
-                        ${report.created_at
+                        ${
+                            report.created_at
                             ? new Date(
                                 report.created_at
                               ).toLocaleString()
-                            : "N/A"}
+                            : "N/A"
+                        }
                     </p>
 
-                    <button
-                        onclick="viewReport('${report._id}')"
-                        class="view-btn">
+                    <div class="report-actions">
 
-                        📄 View Full Report
+                        <button
+                            onclick="viewReport('${report._id}')"
+                            class="view-btn">
 
-                    </button>
+                            📄 View Full Report
+
+                        </button>
+
+                        <button
+                            onclick="deleteReport('${report._id}')"
+                            class="delete-btn">
+
+                            🗑 Delete Report
+
+                        </button>
+
+                    </div>
 
                 </div>
                 `

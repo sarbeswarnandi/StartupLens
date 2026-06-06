@@ -235,3 +235,257 @@ def get_report_by_name(
         )
 
     return reports
+
+@app.get("/analytics")
+def get_analytics():
+
+    reports = list(
+        reports_collection.find()
+    )
+
+    total_reports = len(
+        reports
+    )
+
+    if total_reports == 0:
+
+        return {
+            "total_reports": 0,
+            "average_fundability": 0,
+            "top_sector": "N/A",
+            "highest_startup": "N/A"
+        }
+
+    fundability_scores = []
+
+    sector_count = {}
+
+    highest_score = 0
+
+    highest_startup = "N/A"
+
+    for report in reports:
+
+        score = report.get(
+            "scores",
+            {}
+        ).get(
+            "fundability_score",
+            0
+        )
+
+        fundability_scores.append(
+            score
+        )
+
+        if score > highest_score:
+
+            highest_score = score
+
+            highest_startup = (
+                report
+                .get(
+                    "startup_data",
+                    {}
+                )
+                .get(
+                    "name",
+                    "Unknown"
+                )
+            )
+
+        sector = (
+            report
+            .get(
+                "startup_data",
+                {}
+            )
+            .get(
+                "sector",
+                "Unknown"
+            )
+        )
+
+        sector_count[
+            sector
+        ] = (
+            sector_count.get(
+                sector,
+                0
+            ) + 1
+        )
+
+    top_sector = max(
+        sector_count,
+        key=sector_count.get
+    )
+
+    return {
+
+        "total_reports":
+        total_reports,
+
+        "average_fundability":
+        round(
+            sum(
+                fundability_scores
+            ) /
+            total_reports,
+            2
+        ),
+
+        "top_sector":
+        top_sector,
+
+        "highest_startup":
+        highest_startup,
+
+        "highest_score":
+        highest_score
+    }
+
+@app.get("/analytics")
+def get_analytics():
+
+    try:
+
+        reports = list(
+            reports_collection.find()
+        )
+
+        total_reports = len(
+            reports
+        )
+
+        if total_reports == 0:
+
+            return {
+
+                "total_reports": 0,
+
+                "average_fundability": 0,
+
+                "top_sector": "N/A",
+
+                "highest_startup": "N/A",
+
+                "highest_score": 0
+            }
+
+        fundability_scores = []
+
+        sector_count = {}
+
+        highest_score = 0
+
+        highest_startup = "N/A"
+
+        for report in reports:
+
+            score = (
+                report
+                .get("scores", {})
+                .get(
+                    "fundability_score",
+                    0
+                )
+            )
+
+            fundability_scores.append(
+                score
+            )
+
+            if score > highest_score:
+
+                highest_score = score
+
+                highest_startup = (
+                    report
+                    .get(
+                        "startup_data",
+                        {}
+                    )
+                    .get(
+                        "name",
+                        "Unknown"
+                    )
+                )
+
+            sector = (
+                report
+                .get(
+                    "startup_data",
+                    {}
+                )
+                .get(
+                    "sector",
+                    "Unknown"
+                )
+            )
+
+            sector_count[sector] = (
+                sector_count.get(
+                    sector,
+                    0
+                ) + 1
+            )
+
+        top_sector = max(
+            sector_count,
+            key=sector_count.get
+        )
+
+        return {
+
+            "total_reports":
+            total_reports,
+
+            "average_fundability":
+            round(
+                sum(
+                    fundability_scores
+                ) /
+                total_reports,
+                2
+            ),
+
+            "top_sector":
+            top_sector,
+
+            "highest_startup":
+            highest_startup,
+
+            "highest_score":
+            highest_score
+        }
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
+        }
+    
+@app.delete("/report/{report_id}")
+def delete_report(
+    report_id: str
+):
+
+    result = reports_collection.delete_one(
+        {
+            "_id": ObjectId(
+                report_id
+            )
+        }
+    )
+
+    if result.deleted_count == 0:
+
+        return {
+            "error":
+            "Report not found"
+        }
+
+    return {
+        "message":
+        "Report deleted successfully"
+    }
