@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-
 from scorer import score_startup
 from matcher import match_investors
 from flag_detector import detect_flags
 from memo_generator import generate_memo
 from bson import ObjectId
+from competitor_analyzer import analyze_competitors
 
 from report_model import (
     save_report,
@@ -61,14 +61,18 @@ def test_score(data: dict):
             data,
             scores
         )
+        competitor_analysis = analyze_competitors(
+            data
+        )
 
         try:
 
             save_report(
                 data,
                 scores,
+                investors,
                 flags,
-                investors
+                competitor_analysis
             )
 
         except Exception as e:
@@ -82,9 +86,10 @@ def test_score(data: dict):
 
             "scores": scores,
             "investors": investors,
-            "flags": flags
-
+            "flags": flags,
+            "competitor_analysis": competitor_analysis
         }
+
 
     except Exception as e:
 
@@ -119,11 +124,16 @@ def generate_memo_route(data: dict):
 
         try:
 
+            competitor_analysis = analyze_competitors(
+                data
+            )
+
             save_report(
                 data,
                 scores,
+                investors,
                 flags,
-                investors
+                competitor_analysis
             )
 
         except Exception as e:
@@ -178,7 +188,9 @@ def get_reports():
     try:
         reports = []
 
-        for report in reports_collection.find():
+        for report in reports_collection.find().sort(
+            "created_at", -1
+        ):
             report["_id"] = str(report["_id"])
             reports.append(report)
 

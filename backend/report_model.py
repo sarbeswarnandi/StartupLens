@@ -18,7 +18,8 @@ def save_report(
     startup_data,
     scores,
     flags,
-    investors
+    investors,
+    competitor_analysis
 ):
 
     report = {
@@ -33,6 +34,7 @@ def save_report(
         flags,
 
         "investors": investors,
+        "competitor_analysis": competitor_analysis,
         "created_at": datetime.now(timezone.utc),
     }
 

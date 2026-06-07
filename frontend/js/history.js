@@ -190,10 +190,15 @@ function renderReports(
                         <strong>Created:</strong>
                         ${
                             report.created_at
-                            ? new Date(
-                                report.created_at
-                              ).toLocaleString()
-                            : "N/A"
+                                ? new Date(
+                                      report.created_at
+                                  ).toLocaleString(
+                                      "en-IN",
+                                      {
+                                          timeZone: "Asia/Kolkata"
+                                      }
+                                  )
+                                : "N/A"
                         }
                     </p>
 

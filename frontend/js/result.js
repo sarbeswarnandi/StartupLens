@@ -199,6 +199,70 @@ if (
         .join("");
 }
 
+/* ==========================
+   Competitor Analysis
+========================== */
+
+const competitorContainer =
+    document.getElementById(
+        "competitorAnalysis"
+    );
+
+const competitorAnalysis =
+    result.competitor_analysis;
+
+if (
+    !competitorAnalysis
+) {
+
+    competitorContainer.innerHTML =
+        "<p>No competitor analysis available.</p>";
+
+} else {
+
+    competitorContainer.innerHTML =
+
+    `
+    <h4>Competitors</h4>
+
+    <ul>
+        ${
+            competitorAnalysis.competitors
+                .map(
+                    competitor =>
+                    `<li>${competitor}</li>`
+                )
+                .join("")
+        }
+    </ul>
+
+    <h4>Advantages</h4>
+
+    <ul>
+        ${
+            competitorAnalysis.advantages
+                .map(
+                    advantage =>
+                    `<li>${advantage}</li>`
+                )
+                .join("")
+        }
+    </ul>
+
+    <h4>Risks</h4>
+
+    <ul>
+        ${
+            competitorAnalysis.risks
+                .map(
+                    risk =>
+                    `<li>${risk}</li>`
+                )
+                .join("")
+        }
+    </ul>
+    `;
+}
 
 /* ==========================
    PDF Download
